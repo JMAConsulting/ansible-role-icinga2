@@ -139,7 +139,7 @@ function systemCheck($prot, $host_address, $path, $site_key, $api_key, $show_hid
         continue;
       }
       // Skip this item if it's hidden and we're hiding hidden items
-      if ($attrib['is_visible'] == 0 && !$show_hidden) {
+      if ($attrib['is_visible'] == 0 && !$show_hidden && $attrib['name'] != 'extensionUpdates') {
         continue;
       }
       // Skip this item if it doesn't meet the warning threshold
