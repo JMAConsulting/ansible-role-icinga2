@@ -1,5 +1,12 @@
 ---
 
+- name: Gather Facts for use by Icinga2 role
+  gather_facts:
+  parallel: yes
+  tags:
+    - icinga2
+    - packages
+
 - name: Check if Icinga was already installed from debmon
   stat: path=/etc/apt/sources.list.d/debmon_org_debmon.list
   register: icinga_old_package

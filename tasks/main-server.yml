@@ -19,7 +19,7 @@
     - ufw
     - uwsgi
     - uwsgi-plugin-python
-    - php7.3-fpm # otherwise apache gets installed
+    - php{{ icinga_php_version }}-fpm # otherwise apache gets installed
     - icingaweb2
     - icingaweb2-module-monitoring
     - whois # for domain_expiration check
@@ -175,15 +175,15 @@
 
 - name: Deploy PHP configuration overrides
   template:
-    src=etc/php/7.3/mods-available/icinga.ini
-    dest=/etc/php/7.3/mods-available/icinga.ini
+    src=etc/php/mods-available/icinga.ini
+    dest=/etc/php/{{ icinga_php_version }}/mods-available/icinga.ini
     owner=root group=root mode=0644
   notify: restart php-fpm
   tags:
     - icingaweb2
 
 - name: Symlink PHP configuration to fpm
-  file: src="/etc/php/7.3/mods-available/icinga.ini" dest="/etc/php/7.3/fpm/conf.d/90-icinga.ini" owner=root group=root state=link
+  file: src="/etc/php/{{ icinga_php_version }}/mods-available/icinga.ini" dest="/etc/php/{{ icinga_php_version }}/fpm/conf.d/90-icinga.ini" owner=root group=root state=link
   notify: restart php-fpm
   tags:
     - icingaweb2
