@@ -14,7 +14,7 @@
     - nagios-plugins-contrib
     - nginx-full
     - graphite-carbon
-    - graphite-api
+    - graphite-web
     - gunicorn3 # for graphite
     - ufw
     - uwsgi
