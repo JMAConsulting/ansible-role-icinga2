@@ -4,6 +4,7 @@
 - apt: name={{ item }} state=present install_recommends=no
   with_items:
     - dnsutils # required for check_dig
+    - git
     - icinga2
     - icinga2-ido-mysql
     - icingacli
@@ -19,6 +20,7 @@
     - ufw
     - uwsgi
     - uwsgi-plugin-python
+    - uwsgi-plugin-python3
     - php{{ icinga_php_version }}-fpm # otherwise apache gets installed
     - icingaweb2
     - icingaweb2-module-monitoring
@@ -173,6 +175,11 @@
   tags:
     - icinga-icingaweb2
 
+- name: Setup enabled module directory in /var/lib/icingaweb2/modules
+  file: path=/etc/icingaweb2/enabledModules state=directory owner=root group=root mode=0755
+  tags:
+    - icinga-icingaweb2
+
 - name: Deploy PHP configuration overrides
   template:
     src=etc/php/mods-available/icinga.ini
@@ -210,7 +217,7 @@
     src=etc/carbon/storage-schemas.conf
     dest=/etc/carbon/storage-schemas.conf
     owner=root group=root mode=0644
-  notify: restart graphite
+#  notify: restart graphite
   tags:
     - icinga-graphite
 
@@ -219,7 +226,7 @@
     src=etc/carbon/storage-aggregation.conf
     dest=/etc/carbon/storage-aggregation.conf
     owner=root group=root mode=0644
-  notify: restart graphite
+#  notify: restart graphite
   tags:
     - icinga-graphite
 
@@ -228,15 +235,58 @@
     src=icingaweb2/modules/graphite/config.ini
     dest=/etc/icingaweb2/modules/graphite/config.ini
     owner=root group=root mode=0644
+  tags:
+    - icinga-graphite
 
 - name: Enable the Icinga2 Graphite module
   shell: icinga2 feature enable graphite
   args:
     creates: /etc/icinga2/features-enabled/graphite.conf
   notify: restart icinga2
+  tags:
+    - icinga-graphite
 
 - name: Fix permissions on /var/lib/graphite
   file: path=/var/lib/graphite state=directory owner=_graphite group=_graphite mode=0755
+  tags:
+    - icinga-graphite
 
 - name: Fix permissions on /var/lib/graphite/whisper
   file: path=/var/lib/graphite/whisper state=directory owner=_graphite group=_graphite mode=0755
+  tags:
+    - icinga-graphite
+
+- name: Deploy uwsgi configuration file
+  template:
+    src=etc/uwsgi/apps-available/graphite-api.ini
+    dest=/etc/uwsgi/apps-available/graphite-api.ini
+    owner=root group=root mode=0644
+  tags:
+    - icinga-graphite
+
+- name: Enable uwsgi graphite module
+  file: src="/etc/uwsgi/apps-available/graphite-api.ini" dest="/etc/uwsgi/apps-enabled/graphite-api.ini" owner=root group=root state=link
+  notify: restart uwsgi
+  tags:
+    - icinga-graphite
+
+- name: install certbot
+  apt:
+    name:
+      - certbot
+      - python-certbot-nginx
+    state: present
+    install_recommends: no
+  tags:
+    - icinga-lets-encrypt
+
+- name: Register with Lets Encrypt.
+  shell: "certbot register --agree-tos -m {{ admin_email_address }} --quiet --non-interactive --no-eff-email"
+  ignore_errors: yes
+  tags:
+    - icinga-lets-encrypt
+
+- name: Install Lets Encrypt Certificates
+  shell: "certbot --nginx -d {{ icinga2_main_node }} --keep-until-expiring --non-interactive"
+  tags:
+    - icinga-lets-encrypt

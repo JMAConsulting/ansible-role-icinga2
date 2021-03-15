@@ -3,7 +3,10 @@
   service: name=icinga2 state=restarted
 
 - name: restart php-fpm
-  service: name=php7.0-fpm state=restarted
+  service: name=php{{ icinga_php_version }}-fpm state=restarted
 
 - name: restart graphite
   service: name=graphite-api state=restarted
+
+- name: restart uwsgi
+  service: name=uwsgi state=restarted

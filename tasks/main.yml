@@ -2,7 +2,13 @@
 
 - name: Gather Facts for use by Icinga2 role
   gather_facts:
-  parallel: yes
+    parallel: yes
+  tags:
+    - icinga2
+    - packages
+
+- name: install required gnupg package
+  apt: pkg=gnupg state=present
   tags:
     - icinga2
     - packages
