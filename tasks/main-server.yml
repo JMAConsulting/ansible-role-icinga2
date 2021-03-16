@@ -1,8 +1,10 @@
 ---
 
 # nb: nagios-plugins-contrib is required for check_ssl_cert
-- apt: name={{ item }} state=present install_recommends=no
-  with_items:
+- apt: 
+   state: present
+   install_recommends: no
+   name:
     - dnsutils # required for check_dig
     - git
     - icinga2
@@ -22,6 +24,14 @@
     - uwsgi-plugin-python
     - uwsgi-plugin-python3
     - php{{ icinga_php_version }}-fpm # otherwise apache gets installed
+    - php{{ icinga_php_version }}-intl
+    - php{{ icinga_php_version }}-mysql
+    - php{{ icinga_php_version }}-pdo
+    - php{{ icinga_php_version }}-gd
+    - php{{ icinga_php_version }}-imagick
+    - php{{ icinga_php_version }}-curl
+    - opendkim
+    - postfix
     - icingaweb2
     - icingaweb2-module-monitoring
     - whois # for domain_expiration check
@@ -161,6 +171,45 @@
   tags:
     - icinga2
     - icinga2-custom-checks
+
+- name: Deploy Customised services configuration
+  template: src="etc/icinga2/conf.d/services.conf" dest="/etc/icinga2/conf.d/services.conf" owner=root group=root mode=0644
+  notify: restart icinga2
+  tags:
+    - icinga2
+
+- name: create Master zone folder
+  file: path="/etc/icinga2/zones.d/master" state=directory owner=nagios group=nagios mode=0755
+  tags:
+    - icinga2
+
+- name: create Master Hosts folder
+  file: path="/etc/icinga2/zones.d/master/hosts" state=directory owner=nagios group=nagios mode=0755
+  tags:
+    - icinga2
+
+- name: create Master services folder
+  file: path="/etc/icinga2/zones.d/master/services" state=directory owner=nagios group=nagios mode=0755
+  tags:
+    - icinga2
+
+- name: Deploy Custom service configurations
+  template: src="etc/icinga2/zones.d/master/services/{{ item }}.conf" dest="/etc/icinga2/zones.d/master/services/{{ item }}.conf" owner=nagios group=nagios mode=0664
+  with_items:
+    - apt
+    - backupninja
+    - civicrm
+    - drupal
+    - memory
+    - mysql
+    - ssl_cert
+#    - ufw
+    - wordpress
+    - zpool
+  notify: restart icinga2
+  tags:
+    - icinga2
+    - icinga2-custom-services
 
 ###
 ### Icingaweb2 and Graphite module setup

@@ -23,3 +23,5 @@ icinga2_ipv6_address: "::1"
 icinga2_server_warning_procs: "1050"
 icinga2_server_critical_procs: "1100"
 icinga_php_version: 7.3
+icinga2_has_backupninja: true
+icinga2_mysql_host: "localhost"

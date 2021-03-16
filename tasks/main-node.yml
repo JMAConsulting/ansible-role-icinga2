@@ -1,31 +1,30 @@
 ---
 
-- apt: name={{ item }} state=present install_recommends=no
-  with_items:
-    - icinga2
-    - monitoring-plugins-basic # required for check_apt
-    - nagios-plugins-contrib # for mysql checks
+- apt: 
+    install_recommends: no
+    state: present
+    name:
+      - icinga2
+      - monitoring-plugins-basic # required for check_apt
+      - monitoring-plugins-standard # for mysql checks
+      - nagios-plugins-contrib # for mysql checks
   tags:
     - icinga2
     - packages
   when: ansible_distribution == "Debian"
 
-- apt: name={{ item }} state=present install_recommends=no
-  with_items:
-    - icinga2
-    - nagios-plugins
-    - libmonitoring-plugin-perl
-    - nagios-plugins-contrib # for mysql checks
+- apt:
+    install_recommends: no
+    state: present
+    name:
+      - icinga2
+      - nagios-plugins
+      - libmonitoring-plugin-perl
+      - nagios-plugins-contrib # for mysql checks
   tags:
     - icinga2
     - packages
   when: ansible_distribution == "Ubuntu"
-
-- apt: name={{ item }} state=present install_recommends=no
-  with_items:
-    - nagios-plugins-contrib # for mysql checks
-  tags:
-    - icinga2-mysql
 
 - name: Deploy icinga2 basic configuration files
   template: src="etc/icinga2/{{ item }}" dest="/etc/icinga2/{{ item }}" owner="{{ icinga2_user }}" group="{{ icinga2_user }}" mode=0644
@@ -92,14 +91,14 @@
 - template: src=features-available/api.conf dest=/etc/icinga2/features-available/api.conf owner=root group=root mode=0644
   notify: restart icinga2
 
-- template: src="zones.d/hostzone-for-master.conf" dest="/etc/icinga2/zones.d/{{ inventory_hostname }}.conf" owner="{{ icinga2_user }}" group="{{ icinga2_user }}" mode=0644
+- template: src="etc/icinga2/zones.d/hostzone-for-master.conf" dest="/etc/icinga2/zones.d/{{ inventory_hostname }}.conf" owner="{{ icinga2_user }}" group="{{ icinga2_user }}" mode=0644
   delegate_to: "{{ icinga2_main_node }}"
   notify: restart icinga2
   tags:
     - icinga2
     - icinga2-cert
 
-- template: src="zones.d/host-for-master.conf" dest="/etc/icinga2/zones.d/master/hosts/{{ inventory_hostname }}.conf" owner="{{ icinga2_user }}" group="{{ icinga2_user }}" mode=0644
+- template: src="etc/icinga2/zones.d/host-for-master.conf" dest="/etc/icinga2/zones.d/master/hosts/{{ inventory_hostname }}.conf" owner="{{ icinga2_user }}" group="{{ icinga2_user }}" mode=0644
   delegate_to: "{{ icinga2_main_node }}"
   notify: restart icinga2
   tags:
