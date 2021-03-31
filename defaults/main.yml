@@ -27,3 +27,4 @@ icinga2_has_backupninja: true
 icinga2_mysql_host: "localhost"
 icinga2_mysql_username: false
 icinga2_mysql_password: false
+icinga2_sites: false

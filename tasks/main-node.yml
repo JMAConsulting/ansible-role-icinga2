@@ -105,6 +105,15 @@
     - icinga2
     - icinga2-cert
 
+- template: src="etc/icinga2/zones.d/site-host-for-master.conf" dest="/etc/icinga2/zones.d/master/hosts/{{ item.hostname }}.conf" owner="{{ icinga2_user }}" group="{{ icinga2_user }}" mode=0644
+  delegate_to: "{{ icinga2_main_node }}"
+  notify: restart icinga2
+  with_items: "{{ icinga2_sites }}"
+  when: icinga2_sites
+  tags: 
+   - icinga2
+   - icinga2-site-checks
+
 - name: Disable Icinga2 notifications
   shell: icinga2 feature disable notification
   args:
