@@ -5,12 +5,15 @@
     state: present
     name:
       - icinga2
-      - monitoring-plugins-basic # required for check_apt
-      - monitoring-plugins-standard # for mysql checks
+      - monitoring-plugins
+      - monitoring-plugins-basic
+      - monitoring-plugins-common
+      - monitoring-plugins-standard
       - nagios-plugins-contrib # for mysql checks
   tags:
     - icinga2
     - packages
+    - icinga2-pacakges
   when: ansible_distribution == "Debian"
 
 - apt:
@@ -20,10 +23,12 @@
       - icinga2
       - nagios-plugins
       - libmonitoring-plugin-perl
+      - libmysqlclient-dev
       - nagios-plugins-contrib # for mysql checks
   tags:
     - icinga2
     - packages
+    - icinga2-pacakges
   when: ansible_distribution == "Ubuntu"
 
 - name: Deploy icinga2 basic configuration files
@@ -68,6 +73,15 @@
 - shell: icinga2 pki request --host {{ icinga2_main_node }} --ticket {{ ticket.stdout }} --key "{{ icinga2_cert_dir }}/{{ inventory_hostname }}.key" --cert "{{ icinga2_cert_dir }}/{{ inventory_hostname }}.crt" --trustedcert "{{ icinga2_cert_dir }}/trusted-master.crt" --ca "{{ icinga2_cert_dir }}/ca.crt"
   args:
     creates: "/etc/icinga2/pki/ca.crt"
+  tags:
+    - icinga2
+    - icinga2-cert
+
+- name: create symlink directory as appropriate
+  file:
+    src: "{{ icinga2_cert_dir }}"
+    dest: "/var/lib/icinga2/certs"
+    state: link
   tags:
     - icinga2
     - icinga2-cert

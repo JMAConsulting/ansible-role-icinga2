@@ -63,7 +63,7 @@ switch (strtolower($cms)) {
     break;
 
   case 'drupal8':
-    $path = 'libraries/civicrm/extern/rest.php';
+    $path = 'vendor/civicrm/civicrm-core/extern/rest.php';
     break;
 }
 if (!$path) {
