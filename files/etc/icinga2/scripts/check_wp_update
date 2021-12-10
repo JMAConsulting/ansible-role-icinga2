@@ -68,7 +68,7 @@ fi
 
 # Check that we're getting a 200 OK message for the wp-version.php file on the remote host. 
 response=`$CURL $CURL_OPTS -sI ${protocol}${hostname}/$path`
-if [[ $response != *"200 OK"* ]]; then
+if [[ $response != *"200"* ]]; then
         echo 'CRITICAL - Checker Script not installed on remote host'
         exit $STATE_CRITICAL
 fi
@@ -81,6 +81,9 @@ if [ $? != 0 ]; then
 else
 	status=`echo $result | cut -d\# -f1`
 	text=`echo $result | cut -d\# -f2`
+	if [ -z "$status" ]; then
+	  exit $STATE_UNKNOWN
+	fi
 
 	echo "WORDPRESS $status - $text"
 	
