@@ -174,6 +174,7 @@
     - check_ufw
     - check_wp_update
     - check_zpool
+    - zfs_stats.sh
     - restart_service
     - run_aegir_verify
   notify: restart icinga2
@@ -207,6 +208,7 @@
     - ufw
     - wordpress
     - zpool
+    - zfs_stats
   notify: restart icinga2
   tags:
     - icinga2
