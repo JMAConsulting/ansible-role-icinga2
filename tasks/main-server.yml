@@ -242,6 +242,7 @@
     - cert_expiry
     - cmsversion
     - file_content
+    - joomla
     - mem
     - md_raid
     - mysqldump
@@ -283,6 +284,7 @@
     - backupninja
     - civicrm
     - drupal
+    - joomla
     - memory
     - mysql
     - ssl_cert
