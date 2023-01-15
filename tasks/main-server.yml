@@ -246,6 +246,8 @@
     - mem
     - md_raid
     - mysqldump
+    - mysql_replication
+    - mysql_replication_delay
     - mysql_uptime
     - ufw
     - wordpress
@@ -287,6 +289,8 @@
     - joomla
     - memory
     - mysql
+    - mysql_replication
+    - mysql_replication_delay
     - ssl_cert
 #    - ufw
     - wordpress

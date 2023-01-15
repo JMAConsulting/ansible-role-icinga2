@@ -207,6 +207,8 @@
     - md_raid
     - mysqldump
     - mysql_uptime
+    - mysql_replication
+    - mysql_replication_delay
     - ufw
     - wordpress
     - zpool
