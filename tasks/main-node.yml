@@ -150,12 +150,12 @@
     - icinga2-custom-checks
 
 - name: Deploy custom checks
-  template
-    src="usr/local/lib/icinga2-plugins/{{ item }}"
-    dest="/usr/local/lib/icinga2-plugins/{{ item }}"
-    owner=root
-    group=root
-    mode=0755
+  template:
+    src: "usr/local/lib/icinga2-plugins/{{ item }}"
+    dest: "/usr/local/lib/icinga2-plugins/{{ item }}"
+    owner: root
+    group: root
+    mode: 0755
   with_items:
     - check_aegir_disk
     - check_aegir_sql
@@ -169,7 +169,7 @@
     - check_aegir_civicrm_participants
     - check_backup
     - check_bandwidth
-    - check_rebotrequired
+    - check_rebootrequired
     - check_civicrm
     - check_cmsversion
     - check_file_content
