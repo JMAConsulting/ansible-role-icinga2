@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
+# Based on:
 # Script by Marianne M. Spiller <marianne.spiller@dfki.de>
 # 20180627 - print dataset and filesystem stats when -d is not given
 # 20180118 - initial commit
+# Source: https://github.com/netzwerkgoettin/icinga2-plugin-zfsstats
+# With changes to ignore quotas, and calculate free space using the total zpool available space instead.
 
 PROG=`basename $0`
 ##---- Defining Icinga 2 exit states
@@ -53,7 +56,7 @@ _getopts() {
 
 _performance_data() {
 cat <<- _EOF_
-|used=$USED;$WARNING_VALUE;$CRITICAL_VALUE;0;$QUOTA available=$AVAIL;;;;$QUOTA refer=$REFER;;;;$QUOTA
+| used=$USED; available=$AVAIL; total=$TOTAL;
 _EOF_
 }
 
@@ -89,46 +92,31 @@ if [ -z "$CRITICAL_PERCENT" ] ; then
   CRITICAL_PERCENT="5"
 fi
 
+# Total size available in pool
+TOTAL=`zpool list -Hp -o size $ZFS_DATASET`
+TOTAL_READABLE=`zpool list -H -o size $ZFS_DATASET`
+
 USED=`zfs list -Hp -o used $ZFS_DATASET`
+USED_READABLE=`zfs list -H -o used $ZFS_DATASET`
 AVAIL=`zfs list -Hp -o avail $ZFS_DATASET`
 AVAIL_READABLE=`zfs list -H -o avail $ZFS_DATASET`
 REFER=`zfs list -Hp -o refer $ZFS_DATASET`
-QUOTA=`zfs get -Hp -o value quota $ZFS_DATASET`
 
-if [ "$QUOTA" -eq 0 ] ; then
-  echo "WARNING: no quota set for $ZFS_DATASET. You should consider to set limits. Using overall limits now."
-  QUOTA="$AVAIL"
-  QUOTA_READABLE="- no quota -"
-else
-  QUOTA_READABLE=`zfs get -H -o value quota $ZFS_DATASET`
-fi
-
-DIFF=$(( $QUOTA-$USED ))
+AVAIL_PERCENT=$(( $AVAIL*100/$TOTAL|bc -l ))
 WARNING_VALUE=$(( $USED*$WARNING_PERCENT/100|bc -l ))
 CRITICAL_VALUE=$(( $USED*$CRITICAL_PERCENT/100|bc -l ))
 
 ##----------- Informational output follows
-read -d '' FYI <<- _EOF_
-Dataset information about $ZFS_DATASET:
-
-  - Quota:     $QUOTA_READABLE
-  - Available: $AVAIL_READABLE
-
-_EOF_
-
-if [ "$DIFF" -lt "$CRITICAL_VALUE" ] ; then
-  echo "CRITICAL: only $AVAIL_READABLE available, dataset $ZFS_DATASET nearly full; consider increasing quota or deleting data."
-  echo "$FYI"
+if [ "$AVAIL_PERCENT" -lt "$CRITICAL_PERCENT" ] ; then
+  echo -n "CRITICAL: only $AVAIL_PERCENT% ($AVAIL_READABLE) available on $ZFS_DATASET "
   _performance_data
   exit $STATE_CRITICAL
-elif [ "$DIFF" -lt "$WARNING_VALUE" ] ; then
-  echo "WARNING: only $AVAIL_READABLE available, dataset $ZFS_DATASET is getting full. Please investigate."
-  echo "$FYI"
+elif [ "$AVAIL_PERCENT" -lt "$WARNING_PERCENT" ] ; then
+  echo -n "WARNING: only $AVAIL_PERCENT% ($AVAIL_READABLE) available on $ZFS_DATASET "
   _performance_data
   exit $STATE_WARNING
 else 
-  echo "OK: $AVAIL_READABLE available on $ZFS_DATASET, that's fairly enough."
-  echo "$FYI"
+  echo -n "OK: $AVAIL_PERCENT% ($AVAIL_READABLE) available on $ZFS_DATASET "
   _performance_data
   exit $STATE_OK
 fi
