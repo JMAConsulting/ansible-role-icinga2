@@ -1,0 +1,30 @@
+INPUT="/var/run/reboot-required.pkgs"
+
+if [ ! -f "$INPUT" ]; then
+	echo "OK"
+	exit 0
+fi
+
+NUM_LINES=`cat "$INPUT" | wc -l`
+
+case $NUM_LINES in
+	0)
+		echo "UNKNOWN: $INPUT is empty"
+		exit 4
+		;;
+	1)
+		echo "WARNING: $NUM_LINES package requires a reboot:"
+		cat "$INPUT"
+		exit 1
+		;;
+	[2-9]*)
+		echo "WARNING: $NUM_LINES packages require a reboot:"
+		cat "$INPUT"
+		exit 1
+		;;
+	*)
+		echo "UNKNOWN: Unexpected output of 'wc': $NUM_LINES"
+		exit 4
+		;;
+		
+esac

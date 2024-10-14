@@ -227,6 +227,7 @@
     - check_memory
     - check_md_raid
     - check_mysqldump-secure
+    - check_rebootrequired
     - check_ssl_cert
     - check_ufw
     - check_wp_update
@@ -265,6 +266,7 @@
     - mysql_replication
     - mysql_replication_delay
     - mysql_uptime
+    - reboot_required
     - ufw
     - wordpress
     - zpool
@@ -307,6 +309,7 @@
     - mysql
     - mysql_replication
     - mysql_replication_delay
+    - reboot_required
     - ssl_cert
 #    - ufw
     - wordpress

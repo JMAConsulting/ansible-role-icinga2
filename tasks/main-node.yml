@@ -169,6 +169,7 @@
     - check_aegir_civicrm_participants
     - check_backup
     - check_bandwidth
+    - check_rebotrequired
     - check_civicrm
     - check_cmsversion
     - check_file_content
@@ -213,6 +214,7 @@
     - mysql_uptime
     - mysql_replication
     - mysql_replication_delay
+    - reboot_required
     - ufw
     - wordpress
     - zpool
