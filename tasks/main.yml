@@ -35,15 +35,16 @@
 
 - name: Get Icinga Apt Key
   apt_key:
-    url="https://packages.icinga.com/icinga.key"
-    state=present
+    url: "https://packages.icinga.com/icinga.key"
+    state: present
+    keyring: "/etc/apt/trusted.gpg.d/icinga.gpg"
   tags:
     - icinga2
     - packages
 
 - name: Configure Icinga Apt Repo
   apt_repository:
-    repo="deb http://packages.icinga.com/{{ ansible_distribution|lower }} icinga-{{ ansible_distribution_release }} main"
+    repo="deb [signed-by=/etc/apt/trusted.gpg.d/icinga.gpg] http://packages.icinga.com/{{ ansible_distribution|lower }} icinga-{{ ansible_distribution_release }} main"
     update_cache=yes 
     state=present
   tags:
