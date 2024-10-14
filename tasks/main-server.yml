@@ -199,7 +199,12 @@
     - icinga2-custom-checks
 
 - name: Deploy custom checks
-  copy: src="etc/icinga2/scripts/{{ item }}" dest="/usr/local/lib/icinga2-plugins/{{ item }}" owner=root group=root mode=0755
+  template:
+    src="usr/local/lib/icinga2-plugins/{{ item }}"
+    dest="/usr/local/lib/icinga2-plugins/{{ item }}"
+    owner=root
+    group=root
+    mode=0755
   with_items:
     - check_aegir_disk
     - check_aegir_sql
@@ -226,8 +231,8 @@
     - check_ufw
     - check_wp_update
     - check_zpool
+    - check_zfs
     - restart_service
-    - zfs_stats.sh
     - run_aegir_verify
   notify: restart icinga2
   tags:

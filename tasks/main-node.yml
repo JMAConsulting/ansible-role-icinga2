@@ -1,4 +1,3 @@
----
 
 - apt: 
     install_recommends: no
@@ -77,14 +76,14 @@
     - icinga2
     - icinga2-cert
 
-- name: create symlink directory as appropriate
-  file:
-    src: "{{ icinga2_cert_dir }}"
-    dest: "/var/lib/icinga2/certs"
-    state: link
-  tags:
-    - icinga2
-    - icinga2-cert
+#- name: create symlink directory as appropriate
+#  file:
+#    src: "{{ icinga2_cert_dir }}"
+#    dest: "/var/lib/icinga2/certs"
+#    state: link
+#  tags:
+#    - icinga2
+#    - icinga2-cert
 
 - template: src=etc/icinga2/zones.conf dest=/etc/icinga2/zones.conf owner="{{ icinga2_user }}" group="{{ icinga2_user }}" mode=0644
   notify: restart icinga2
@@ -151,7 +150,12 @@
     - icinga2-custom-checks
 
 - name: Deploy custom checks
-  copy: src="etc/icinga2/scripts/{{ item }}" dest="/usr/local/lib/icinga2-plugins/{{ item }}" owner=root group=root mode=0755
+  template
+    src="usr/local/lib/icinga2-plugins/{{ item }}"
+    dest="/usr/local/lib/icinga2-plugins/{{ item }}"
+    owner=root
+    group=root
+    mode=0755
   with_items:
     - check_aegir_disk
     - check_aegir_sql
@@ -175,7 +179,7 @@
     - check_ufw
     - check_wp_update
     - check_zpool
-    - zfs_stats.sh
+    - check_zfs
     - restart_service
     - run_aegir_verify
   notify: restart icinga2
