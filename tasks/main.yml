@@ -51,8 +51,8 @@
     - icinga2
     - packages
 
-- include: main-server.yml
+- include_tasks: main-server.yml
   when: "'icinga_servers' in group_names"
 
-- include: main-node.yml
+- include_tasks: main-node.yml
   when: "'icinga_servers' not in group_names"
