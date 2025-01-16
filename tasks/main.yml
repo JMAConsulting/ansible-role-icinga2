@@ -45,7 +45,7 @@
 - name: Configure Icinga Apt Repo
   apt_repository:
     repo="deb [signed-by=/etc/apt/trusted.gpg.d/icinga.gpg] http://packages.icinga.com/{{ ansible_distribution|lower }} icinga-{{ ansible_distribution_release }} main"
-    update_cache=yes 
+    update_cache=yes
     state=present
   tags:
     - icinga2

@@ -1,5 +1,5 @@
 
-- apt: 
+- apt:
     install_recommends: no
     state: present
     name:
@@ -123,7 +123,7 @@
   notify: restart icinga2
   with_items: "{{ icinga2_sites }}"
   when: icinga2_sites
-  tags: 
+  tags:
    - icinga2
    - icinga2-site-checks
 
@@ -246,3 +246,35 @@
   tags:
     - icinga2
     - icinga2-custom-checks
+
+- name: Get PagerDuty Agent Key
+  apt_key:
+    url: "https://packages.pagerduty.com/GPG-KEY-pagerduty"
+    state: present
+    keyring: "/etc/apt/trusted.gpg.d/pagerduty"
+  when: icinga2_pagent_check
+  tags:
+    - icinga2
+    - packages
+
+- name: "Install Pagerduty Agent Repo"
+  apt_repository:
+    repo="deb [signed-by=/etc/apt/trusted.gpg.d/pagerduty] https://packages.pagerduty.com/pdagent deb/"
+    update_cache=yes
+    state=present
+  when: icinga2_pagent_check
+  tags:
+    - icinga2
+    - packages
+
+- name: "Install Pagerduty Agent"
+  apt:
+    install_recommends: no
+    state: present
+    name:
+      - pdagent
+      - pdagent-integrations
+  when: icinga2_pagent_check
+  tags:
+    - icinga2
+    - packages
