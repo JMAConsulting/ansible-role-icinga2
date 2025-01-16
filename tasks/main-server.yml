@@ -480,7 +480,7 @@
     url: "https://packages.pagerduty.com/GPG-KEY-pagerduty"
     state: present
     keyring: "/etc/apt/trusted.gpg.d/pagerduty"
-  when: icinga2_pagent_check
+  when: icinga2_pagerduty_check
   tags:
     - icinga2
     - pagerduty
@@ -491,7 +491,7 @@
     repo="deb [signed-by=/etc/apt/trusted.gpg.d/pagerduty] https://packages.pagerduty.com/pdagent deb/"
     update_cache=yes
     state=present
-  when: icinga2_pagent_check
+  when: icinga2_pagerduty_check
   tags:
     - icinga2
     - pagerduty
@@ -504,7 +504,7 @@
     name:
       - pdagent
       - pdagent-integrations
-  when: icinga2_pagent_check
+  when: icinga2_pagerduty_check
   tags:
     - icinga2
     - pagerduty
