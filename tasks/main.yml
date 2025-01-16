@@ -51,8 +51,20 @@
     - icinga2
     - packages
 
-- include_tasks: main-server.yml
+- include_tasks:
+    file: main-server.yml
+    apply:
+      tags:
+        - icinga2
+        - icinga2-site-checks
+        - packages
   when: "'icinga_servers' in group_names"
 
-- include_tasks: main-node.yml
+- include_tasks:
+    file: main-node.yml
+    apply:
+      tags:
+        - icinga2
+        - icinga2-site-checks
+        - packages
   when: "'icinga_servers' not in group_names"
