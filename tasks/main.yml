@@ -6,6 +6,7 @@
   tags:
     - icinga2
     - packages
+    - pagerduty
 
 - name: install required gnupg package
   apt: pkg=gnupg state=present
@@ -53,12 +54,6 @@
 
 - include_tasks:
     file: main-server.yml
-    apply:
-      tags:
-        - icinga2
-        - icinga2-site-checks
-        - packages
-        - pagerduty
   when: "'icinga_servers' in group_names"
   tags:
     - icinga2
@@ -68,11 +63,6 @@
 
 - include_tasks:
     file: main-node.yml
-    apply:
-      tags:
-        - icinga2
-        - icinga2-site-checks
-        - packages
   when: "'icinga_servers' not in group_names"
   tags:
     - icinga2
