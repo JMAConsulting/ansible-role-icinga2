@@ -58,6 +58,7 @@
   tags:
     - icinga2
     - icinga2-site-checks
+    - icinga2-custom-checks
     - packages
     - pagerduty
 
@@ -67,4 +68,5 @@
   tags:
     - icinga2
     - icinga2-site-checks
+    - icinga2-custom-checks
     - packages

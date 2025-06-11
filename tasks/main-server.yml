@@ -121,6 +121,10 @@
     - opendkim
     - postfix
     - icingaweb2
+    - libmonitoring-plugin-perl
+    - libnet-dns-perl
+    - libreadonly-perl
+    - libdata-validate-domain-perl
 #    - icingaweb2-module-monitoring
     - whois # for domain_expiration check
   tags:
@@ -270,6 +274,18 @@
     - zpool
     - zfs_stats
   notify: restart icinga2
+  tags:
+    - icinga2
+    - icinga2-custom-checks
+
+- template: src="etc/sudoers.d/{{ item }}" dest="/etc/sudoers.d/{{ item }}" owner=root group=root mode=0440
+  with_items:
+    - aegir-icinga2
+    - backup-icinga2
+    - mdadm-icinga2
+    - mysql-icinga2
+    - zfs-icinga2
+    - ufw-icinga2
   tags:
     - icinga2
     - icinga2-custom-checks
