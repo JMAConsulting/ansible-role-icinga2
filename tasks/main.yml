@@ -34,20 +34,35 @@
     - icinga2
     - packages
 
-- name: Get Icinga Apt Key
+- name: Ubuntu | Get Icinga Apt Key
   apt_key:
     url: "https://packages.icinga.com/icinga.key"
     state: present
     keyring: "/etc/apt/trusted.gpg.d/icinga.gpg"
+  when: (ansible_facts['distribution'] == "Ubuntu") and (ansible_facts['distribution_major_version'] < "26")
   tags:
     - icinga2
     - packages
 
-- name: Configure Icinga Apt Repo
+- name: Ubuntu | Configure Icinga Apt Repo
   apt_repository:
-    repo="deb [signed-by=/etc/apt/trusted.gpg.d/icinga.gpg] http://packages.icinga.com/{{ ansible_distribution|lower }} icinga-{{ ansible_distribution_release }} main"
+    repo="deb [signed-by=/etc/apt/trusted.gpg.d/icinga.gpg] http://packages.icinga.com/{{ ansible_facts['distribution']|lower }}  icinga-{{ ansible_facts['distribution_release']|lower }}  main"
     update_cache=yes
     state=present
+  when: (ansible_facts['distribution'] == "Ubuntu") and (ansible_facts['distribution_major_version'] < "26")
+  tags:
+    - icinga2
+    - packages
+
+- name: Ubuntu | Add in icinga Apt repo
+  deb822_repository:
+    name: icinga
+    types: deb
+    uris: "http://packages.icinga.com/{{ ansible_facts['distribution']|lower }}"
+    suites: "icinga-{{ ansible_facts['distribution_release'] }}"
+    components: main
+    signed_by: https://packages.icinga.com/icinga.key
+  when: (ansible_facts['distribution'] == "Ubuntu") and (ansible_facts['distribution_major_version'] < "28") and (ansible_facts['distribution_major_version'] > "26")
   tags:
     - icinga2
     - packages

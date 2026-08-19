@@ -122,7 +122,7 @@
   delegate_to: "{{ icinga2_main_node }}"
   notify: restart icinga2
   with_items: "{{ icinga2_sites }}"
-  when: icinga2_sites
+  when: icinga2_sites is defined
   tags:
    - icinga2
    - icinga2-site-checks
