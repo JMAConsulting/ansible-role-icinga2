@@ -6,6 +6,10 @@ icinga2_main_node: icinga.jmaconsulting.biz
 # we don't want nodes to have the salt, only the server.
 icinga2_secret_ticketsalt: ""
 
+# When true, the generated config reads its secrets from the constants that conf.d/icinga-secrets.conf defines on the master, rendered from 1Password by scripts/generate-icinga-secrets.sh.
+# Leave false for the previous behaviour: values templated in directly.
+icinga2_secrets_from_1password: false
+
 icinga2_allow_ips:
     - 192.168.1.0/24
 
